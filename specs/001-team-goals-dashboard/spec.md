@@ -5,6 +5,16 @@
 **Status**: Draft  
 **Input**: User description: "A minimal full-stack web application where team members can see all team goals for the day, log/update their mood, goals can be marked complete, and dashboard shows team completion % and overall mood"
 
+## Clarifications
+
+### Session 2025-01-27
+
+- Q: How should team members be initially configured in the application? → A: Configurable via simple config file (JSON/YAML that can be edited)
+- Q: Since this is a "full-stack web application," how should data persistence work? → A: Backend API with database (REST API, simple database like SQLite/PostgreSQL)
+- Q: Should users be able to delete goals? → A: Yes, allow deletion with simple UI action (delete button/icon on each goal)
+- Q: What level of accessibility is needed for the MVP? → A: Basic accessibility (keyboard navigation, screen reader support for core features)
+- Q: How should the frontend receive updates when data changes? → A: Polling (periodic API requests to check for updates)
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - View Team Goals Dashboard (Priority: P1)
@@ -39,6 +49,8 @@ As a team member, I want to add goals for any team member so we can track daily 
 1. **Given** I am on the dashboard, **When** I select a team member from the dropdown and enter a goal description, **Then** the goal is added and appears in that member's card
 2. **Given** I submit the add goal form, **When** the goal is added, **Then** the dashboard updates to show the new goal
 3. **Given** I enter an empty goal description, **When** I submit the form, **Then** the system prevents submission and shows an error message
+4. **Given** a team member has goals, **When** I click the delete button/icon on a goal, **Then** the goal is removed from that member's card
+5. **Given** I delete a goal, **When** the goal is removed, **Then** the member card's completion count updates and the team completion percentage in the stats panel updates
 
 ---
 
@@ -87,6 +99,7 @@ As a team member, I want to update my mood or another team member's mood so the 
 - What happens when goal description is very long? (Text truncation or wrapping in card display)
 - How does system handle rapid goal additions? (Handle gracefully, show loading state if needed)
 - What happens when browser is refreshed? (Data persists and dashboard shows current state)
+- What happens when the last goal for a team member is deleted? (Show "0 goals" or empty goal list, update completion count to 0/0)
 
 ## Requirements *(mandatory)*
 
@@ -103,9 +116,17 @@ As a team member, I want to update my mood or another team member's mood so the 
 - **FR-009**: System MUST display a stats panel showing team goal completion percentage
 - **FR-010**: System MUST display a stats panel showing team mood indicator with counts (e.g., "X happy, Y neutral, Z stressed")
 - **FR-011**: System MUST persist goals, mood updates, and completion status across page refreshes
-- **FR-012**: System MUST update the dashboard in real-time when goals are added, completed, or moods are updated
+- **FR-012**: System MUST update the dashboard in real-time when goals are added, completed, deleted, or moods are updated (via periodic polling of the API)
 - **FR-013**: System MUST validate that goal descriptions are not empty before adding
 - **FR-014**: System MUST support desktop browser view (responsive mobile design is out of scope)
+- **FR-015**: System MUST load team members from a configurable file (JSON/YAML format) at application startup
+- **FR-016**: System MUST provide a backend API (REST API) for all data operations (create, read, update, delete goals and moods)
+- **FR-017**: System MUST persist all data (goals, moods, completion status) in a database
+- **FR-018**: System MUST provide a delete button/icon on each goal to allow goal deletion
+- **FR-019**: System MUST support keyboard navigation for all interactive elements (forms, buttons, checkboxes)
+- **FR-020**: System MUST provide appropriate ARIA labels and roles for screen reader compatibility
+- **FR-021**: System MUST ensure all form inputs and interactive elements are keyboard accessible
+- **FR-022**: System MUST implement periodic polling to fetch updated data from the backend API
 
 ### Key Entities *(include if feature involves data)*
 
@@ -124,13 +145,14 @@ As a team member, I want to update my mood or another team member's mood so the 
 - **SC-005**: Team goal completion percentage calculates correctly based on all team members' goal completion status
 - **SC-006**: Team mood indicator accurately reflects the current mood distribution across all team members
 - **SC-007**: All data (goals, moods, completion status) persists correctly across browser refreshes
-- **SC-008**: Dashboard updates automatically when goals are added, completed, or moods are updated without requiring page refresh
+- **SC-008**: Dashboard updates automatically when goals are added, completed, deleted, or moods are updated without requiring page refresh
 
 ## Assumptions
 
-- Team members are pre-configured (no user management needed - out of scope)
+- Team members are configured via a simple config file (JSON/YAML format) that can be edited to add/remove team members (no UI-based user management needed - out of scope)
+- Application uses a backend API with database (REST API with simple database like SQLite/PostgreSQL) for data persistence
+- Real-time updates are implemented via periodic polling (not WebSocket/SSE) to keep implementation simple
 - Application runs in a single browser session (no multi-user concurrency requirements specified)
-- Data persistence uses browser local storage or a simple backend (implementation detail)
 - Desktop browser environment (mobile responsive design is explicitly out of scope)
 - One day's worth of goals (no multi-day history - out of scope)
 - Simple emoji-based mood system (five options: 😀 😊 😐 😞 😤)
