@@ -3,6 +3,7 @@
 Auto-generated from all feature plans. Last updated: 2025-11-23
 
 ## Active Technologies
+- N/A (validation only, no data persistence) (002-validate-dashboard)
 
 - (001-team-goals-dashboard)
 
@@ -23,6 +24,7 @@ tests/
 : Follow standard conventions
 
 ## Recent Changes
+- 002-validate-dashboard: Added N/A (validation only, no data persistence)
 
 - 001-team-goals-dashboard: Added
 
