@@ -13,7 +13,7 @@
 - Q: Since this is a "full-stack web application," how should data persistence work? → A: Backend API with database (REST API, simple database like SQLite/PostgreSQL)
 - Q: Should users be able to delete goals? → A: Yes, allow deletion with simple UI action (delete button/icon on each goal)
 - Q: What level of accessibility is needed for the MVP? → A: Basic accessibility (keyboard navigation, screen reader support for core features)
-- Q: How should the frontend receive updates when data changes? → A: Polling (periodic API requests to check for updates)
+- Q: How should the frontend receive updates when data changes? → A: ~~Polling (periodic API requests to check for updates)~~ (REMOVED - real-time updates not required. Manual refresh or form submission triggers updates.)
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -116,7 +116,7 @@ As a team member, I want to update my mood or another team member's mood so the 
 - **FR-009**: System MUST display a stats panel showing team goal completion percentage
 - **FR-010**: System MUST display a stats panel showing team mood indicator with counts (e.g., "X happy, Y neutral, Z stressed")
 - **FR-011**: System MUST persist goals, mood updates, and completion status across page refreshes
-- **FR-012**: System MUST update the dashboard in real-time when goals are added, completed, deleted, or moods are updated (via periodic polling of the API)
+- **FR-012**: ~~System MUST update the dashboard in real-time when goals are added, completed, deleted, or moods are updated (via periodic polling of the API)~~ (REMOVED - real-time updates not required)
 - **FR-013**: System MUST validate that goal descriptions are not empty before adding
 - **FR-014**: System MUST support desktop browser view (responsive mobile design is out of scope)
 - **FR-015**: System MUST load team members from a configurable file (JSON/YAML format) at application startup
@@ -126,7 +126,7 @@ As a team member, I want to update my mood or another team member's mood so the 
 - **FR-019**: System MUST support keyboard navigation for all interactive elements (forms, buttons, checkboxes)
 - **FR-020**: System MUST provide appropriate ARIA labels and roles for screen reader compatibility
 - **FR-021**: System MUST ensure all form inputs and interactive elements are keyboard accessible
-- **FR-022**: System MUST implement periodic polling to fetch updated data from the backend API
+- **FR-022**: ~~System MUST implement periodic polling to fetch updated data from the backend API~~ (REMOVED - polling not required)
 
 ### Key Entities *(include if feature involves data)*
 
@@ -145,13 +145,13 @@ As a team member, I want to update my mood or another team member's mood so the 
 - **SC-005**: Team goal completion percentage calculates correctly based on all team members' goal completion status
 - **SC-006**: Team mood indicator accurately reflects the current mood distribution across all team members
 - **SC-007**: All data (goals, moods, completion status) persists correctly across browser refreshes
-- **SC-008**: Dashboard updates automatically when goals are added, completed, deleted, or moods are updated without requiring page refresh
+- **SC-008**: ~~Dashboard updates automatically when goals are added, completed, deleted, or moods are updated without requiring page refresh~~ (REMOVED - automatic updates not required)
 
 ## Assumptions
 
 - Team members are configured via a simple config file (JSON/YAML format) that can be edited to add/remove team members (no UI-based user management needed - out of scope)
 - Application uses a backend API with database (REST API with simple database like SQLite/PostgreSQL) for data persistence
-- Real-time updates are implemented via periodic polling (not WebSocket/SSE) to keep implementation simple
+- ~~Real-time updates are implemented via periodic polling~~ (REMOVED - real-time updates not required. Users can refresh the page to see updates.)
 - Application runs in a single browser session (no multi-user concurrency requirements specified)
 - Desktop browser environment (mobile responsive design is explicitly out of scope)
 - One day's worth of goals (no multi-day history - out of scope)

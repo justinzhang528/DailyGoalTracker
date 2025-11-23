@@ -13,9 +13,41 @@ public class TeamMemberConfigService
     public TeamMemberConfigService(ILogger<TeamMemberConfigService> logger)
     {
         _logger = logger;
-        var baseDirectory = AppContext.BaseDirectory;
-        _configPath = Path.Combine(baseDirectory, "..", "..", "..", "..", "..", "..", "team-members.json");
-        _configPath = Path.GetFullPath(_configPath);
+        
+        // Find team-members.json by searching up from the current directory
+        // It should be at backend/team-members.json relative to the solution root
+        var currentDir = Directory.GetCurrentDirectory();
+        var searchDir = currentDir;
+        
+        for (int i = 0; i < 10; i++)
+        {
+            // Check if we're in the backend directory or can find it
+            var backendPath = Path.Combine(searchDir, "team-members.json");
+            if (File.Exists(backendPath))
+            {
+                _configPath = Path.GetFullPath(backendPath);
+                _logger.LogInformation("Found team-members.json at: {Path}", _configPath);
+                return;
+            }
+            
+            // Also check in backend/ subdirectory
+            var backendSubPath = Path.Combine(searchDir, "backend", "team-members.json");
+            if (File.Exists(backendSubPath))
+            {
+                _configPath = Path.GetFullPath(backendSubPath);
+                _logger.LogInformation("Found team-members.json at: {Path}", _configPath);
+                return;
+            }
+            
+            var parent = Directory.GetParent(searchDir);
+            if (parent == null) break;
+            searchDir = parent.FullName;
+        }
+        
+        // Fallback: try relative to AppContext.BaseDirectory (bin/Debug/net8.0/)
+        var baseDir = AppContext.BaseDirectory;
+        _configPath = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "..", "..", "team-members.json"));
+        _logger.LogWarning("Using fallback path for team-members.json: {Path}", _configPath);
     }
 
     public async Task LoadTeamMembersAsync()
@@ -27,7 +59,13 @@ public class TeamMemberConfigService
         }
 
         var json = await File.ReadAllTextAsync(_configPath);
-        var configMembers = JsonSerializer.Deserialize<List<TeamMemberConfig>>(json);
+        _logger.LogInformation("Reading team-members.json content: {Content}", json);
+        
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+        var configMembers = JsonSerializer.Deserialize<List<TeamMemberConfig>>(json, options);
 
         if (configMembers == null || configMembers.Count == 0)
         {
@@ -64,6 +102,7 @@ public class TeamMemberConfigService
 
     private class TeamMemberConfig
     {
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
     }
 }

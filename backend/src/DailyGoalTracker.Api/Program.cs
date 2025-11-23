@@ -1,4 +1,5 @@
 using DailyGoalTracker.Api.Data.Database;
+using DailyGoalTracker.Api.Data.Dapper;
 using DailyGoalTracker.Api.Middleware;
 using DailyGoalTracker.Api.Services;
 
@@ -21,8 +22,15 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Register repositories
+builder.Services.AddScoped<TeamMemberRepository>();
+builder.Services.AddScoped<GoalRepository>();
+
 // Register services
 builder.Services.AddScoped<TeamMemberConfigService>();
+builder.Services.AddScoped<TeamMemberService>();
+builder.Services.AddScoped<GoalService>();
+builder.Services.AddScoped<StatsService>();
 
 var app = builder.Build();
 
