@@ -1,5 +1,5 @@
 <template>
-  <div class="card bg-base-100 shadow-xl" role="region" aria-label="Update mood form">
+  <div class="card bg-white shadow-xl" role="region" aria-label="Update mood form">
     <div class="card-body">
       <h2 class="card-title">Update Mood</h2>
       
@@ -11,7 +11,7 @@
           <select
             id="teamMemberMood"
             v-model="selectedTeamMemberId"
-            class="select select-bordered w-full"
+            class="select select-bordered w-full bg-white text-gray-900 border border-gray-300 dark:bg-white dark:text-gray-900 dark:border-gray-300"
             required
             :disabled="loading || teamMembers.length === 0"
             aria-label="Select team member"
@@ -27,7 +27,7 @@
           <label class="label" for="mood">
             <span class="label-text">Mood</span>
           </label>
-          <div class="flex gap-2 flex-wrap" role="group" aria-label="Mood selector">
+          <div class="flex gap-2 flex-wrap justify-center" role="group" aria-label="Mood selector">
             <button
               v-for="moodOption in moodOptions"
               :key="moodOption.value"
@@ -37,7 +37,7 @@
               @keydown.space.prevent="selectedMood = moodOption.value"
               :class="[
                 'btn btn-lg',
-                selectedMood === moodOption.value ? 'btn-primary' : 'btn-outline'
+                selectedMood === moodOption.value ? 'btn-secondary' : 'btn-outline btn-secondary'
               ]"
               :aria-label="`Select mood: ${moodOption.label}`"
               :aria-pressed="selectedMood === moodOption.value"
@@ -57,11 +57,9 @@
           <button
             type="submit"
             class="btn btn-primary"
-            :disabled="loading || !selectedTeamMemberId || !selectedMood"
             aria-label="Update mood"
           >
-            <span v-if="loading" class="loading loading-spinner loading-sm"></span>
-            <span v-else>Update Mood</span>
+            <span>Update Mood</span>
           </button>
         </div>
       </form>

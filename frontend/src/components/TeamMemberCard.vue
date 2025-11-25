@@ -1,5 +1,5 @@
 <template>
-  <div class="card bg-base-100 shadow-xl" role="article" :aria-label="`Team member card for ${teamMember.name}`">
+  <div class="card bg-white shadow-xl" role="article" :aria-label="`Team member card for ${teamMember.name}`">
     <div class="card-body">
       <div class="flex items-center justify-between mb-4">
         <h2 class="card-title">{{ teamMember.name }}</h2>
@@ -24,7 +24,7 @@
             type="checkbox"
             :checked="goal.isComplete"
             @change="$emit('toggleComplete', goal.id, !goal.isComplete)"
-            class="checkbox checkbox-sm"
+            class="checkbox checkbox-sm border border-gray-300 dark:border-gray-300"
             :aria-label="`Goal: ${goal.description}, ${goal.isComplete ? 'completed' : 'incomplete'}`"
           />
           <span :class="{ 'line-through text-gray-500': goal.isComplete }" class="flex-1">
@@ -34,7 +34,7 @@
             @click="$emit('deleteGoal', goal.id)"
             @keydown.enter="$emit('deleteGoal', goal.id)"
             @keydown.space.prevent="$emit('deleteGoal', goal.id)"
-            class="btn btn-sm btn-ghost btn-circle"
+            class="btn btn-sm btn-error btn-circle"
             :aria-label="`Delete goal: ${goal.description}`"
             title="Delete goal"
             tabindex="0"
@@ -45,6 +45,11 @@
           </button>
         </li>
       </ul>
+
+      <!-- Error message display -->
+      <div v-if="error" class="alert alert-error mt-4">
+        <span>{{ error }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -56,6 +61,7 @@ interface Props {
   teamMember: TeamMember;
   goals: Goal[];
   completionCount: { completed: number; total: number };
+  error?: string | null;
 }
 
 defineProps<Props>();

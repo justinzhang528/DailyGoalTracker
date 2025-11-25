@@ -1,5 +1,5 @@
 <template>
-  <div class="card bg-base-200 shadow-xl" role="region" aria-label="Team statistics">
+  <div class="card bg-white shadow-xl" role="region" aria-label="Team statistics">
     <div class="card-body">
       <h2 class="card-title">Team Statistics</h2>
       
@@ -11,7 +11,8 @@
         <span>{{ error }}</span>
       </div>
       
-      <div v-else-if="stats" class="space-y-4">
+      <div v-else-if="stats" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Goal Completion -->
         <div>
           <h3 class="font-semibold mb-2">Goal Completion</h3>
           <div class="text-3xl font-bold">{{ stats.completionPercentage }}%</div>
@@ -20,12 +21,17 @@
           </div>
         </div>
 
-        <div>
+        <!-- Team Mood -->
+        <div class="flex flex-col items-center text-center">
           <h3 class="font-semibold mb-2">Team Mood</h3>
-          <div class="space-y-1">
-            <div v-for="(count, mood) in stats.moodCounts" :key="mood" class="flex items-center gap-2">
-              <span class="text-2xl">{{ mood }}</span>
-              <span class="text-sm">{{ count }}</span>
+          <div class="flex flex-wrap justify-center gap-4 w-full">
+            <div
+              v-for="(count, mood) in stats.moodCounts"
+              :key="mood"
+              class="flex flex-col items-center"
+            >
+              <span class="text-3xl">{{ mood }}</span>
+              <span class="text-sm text-gray-600">{{ count }}</span>
             </div>
           </div>
         </div>

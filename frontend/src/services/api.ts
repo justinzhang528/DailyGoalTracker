@@ -22,7 +22,18 @@ class ApiService {
       throw new Error(error.error || `HTTP error! status: ${response.status}`);
     }
 
-    return response.json();
+    // Handle empty responses (e.g., HTTP 204 No Content)
+    if (response.status === 204 || response.headers.get('content-length') === '0') {
+      return {} as ApiResponse<T>;
+    }
+
+    // Only parse JSON if response has content
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return await response.json();
+    }
+
+    return {} as ApiResponse<T>;
   }
 
   // Team Members

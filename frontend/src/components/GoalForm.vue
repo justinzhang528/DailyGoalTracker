@@ -1,5 +1,5 @@
 <template>
-  <div class="card bg-base-100 shadow-xl" role="region" aria-label="Add goal form">
+  <div class="card bg-white shadow-xl" role="region" aria-label="Add goal form">
     <div class="card-body">
       <h2 class="card-title">Add Goal</h2>
       
@@ -11,7 +11,7 @@
           <select
             id="teamMember"
             v-model="selectedTeamMemberId"
-            class="select select-bordered w-full"
+            class="select select-bordered w-full bg-white text-gray-900 border border-gray-300 dark:bg-white dark:text-gray-900 dark:border-gray-300"
             required
             :disabled="loading || teamMembers.length === 0"
             aria-label="Select team member"
@@ -31,7 +31,7 @@
             id="description"
             v-model="description"
             type="text"
-            class="input input-bordered w-full"
+            class="input input-bordered w-full bg-white text-gray-900 border border-gray-300 dark:bg-white dark:text-gray-900 dark:border-gray-300"
             placeholder="Enter goal description..."
             required
             :disabled="loading"
@@ -51,12 +51,10 @@
           <button
             type="submit"
             class="btn btn-primary"
-            :disabled="loading || !selectedTeamMemberId || !description.trim()"
             aria-label="Add goal"
           >
-            <span v-if="loading" class="loading loading-spinner loading-sm"></span>
-            <span v-else>Add Goal</span>
-          </button>
+            <span>Add Goal</span>
+          </button> 
         </div>
       </form>
     </div>
