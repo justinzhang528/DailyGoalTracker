@@ -1,6 +1,11 @@
 <template>
   <div class="container mx-auto p-6">
-    <h1 class="text-4xl font-bold mb-6">Team Goals Dashboard</h1>
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-4xl font-bold">Team Goals Dashboard</h1>
+      <router-link to="/activity-log" class="btn btn-primary" aria-label="View activity log">
+        View Activity Log
+      </router-link>
+    </div>
 
     <div v-if="loading" class="text-center py-8">
       <span class="loading loading-spinner loading-lg"></span>

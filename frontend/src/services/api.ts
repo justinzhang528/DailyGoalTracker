@@ -1,4 +1,4 @@
-import type { ApiResponse, TeamMember, Goal, TeamStats } from '../types';
+import type { ApiResponse, TeamMember, Goal, TeamStats, ActivityRecord } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
 
@@ -79,6 +79,11 @@ class ApiService {
   // Stats
   async getStats(): Promise<ApiResponse<TeamStats>> {
     return this.request<TeamStats>('/stats');
+  }
+
+  // Activities
+  async getActivities(): Promise<ApiResponse<ActivityRecord[]>> {
+    return this.request<ActivityRecord[]>('/activities');
   }
 }
 

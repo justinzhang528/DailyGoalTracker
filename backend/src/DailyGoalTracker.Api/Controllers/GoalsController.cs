@@ -9,11 +9,15 @@ namespace DailyGoalTracker.Api.Controllers;
 public class GoalsController : ControllerBase
 {
     private readonly GoalService _service;
+    private readonly ActivityService _activityService;
+    private readonly TeamMemberService _teamMemberService;
     private readonly ILogger<GoalsController> _logger;
 
-    public GoalsController(GoalService service, ILogger<GoalsController> logger)
+    public GoalsController(GoalService service, ActivityService activityService, TeamMemberService teamMemberService, ILogger<GoalsController> logger)
     {
         _service = service;
+        _activityService = activityService;
+        _teamMemberService = teamMemberService;
         _logger = logger;
     }
 
@@ -54,6 +58,22 @@ public class GoalsController : ControllerBase
                 request.TeamMemberId, request.Description);
             var goal = await _service.CreateAsync(request.TeamMemberId, request.Description);
             _logger.LogInformation("Goal created successfully with ID {GoalId}", goal.Id);
+            
+            // Record activity (best-effort, non-blocking)
+            try
+            {
+                var teamMember = await _teamMemberService.GetByIdAsync(request.TeamMemberId);
+                if (teamMember != null)
+                {
+                    var description = $"{teamMember.Name}'s goal '{goal.Description}' was added";
+                    await _activityService.RecordActivityAsync(ActivityType.AddGoal, request.TeamMemberId, teamMember.Name, description, goal.Id, goal.Description);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to record activity for goal creation (non-blocking)");
+            }
+            
             return CreatedAtAction(nameof(GetById), new { id = goal.Id }, new ApiResponse<Goal>
             {
                 Data = goal,
@@ -85,6 +105,25 @@ public class GoalsController : ControllerBase
         {
             _logger.LogInformation("Updating goal {GoalId} completion status to {IsComplete}", id, request.IsComplete);
             var goal = await _service.UpdateCompleteStatusAsync(id, request.IsComplete);
+            
+            // Only record activity when goal is marked complete (not when uncompleting)
+            if (request.IsComplete)
+            {
+                try
+                {
+                    var teamMember = await _teamMemberService.GetByIdAsync(goal.TeamMemberId);
+                    if (teamMember != null)
+                    {
+                        var description = $"{teamMember.Name}'s goal '{goal.Description}' was completed";
+                        await _activityService.RecordActivityAsync(ActivityType.CompleteGoal, goal.TeamMemberId, teamMember.Name, description, goal.Id, goal.Description);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to record activity for goal completion (non-blocking)");
+                }
+            }
+            
             return Ok(new ApiResponse<Goal>
             {
                 Data = goal,
@@ -107,8 +146,32 @@ public class GoalsController : ControllerBase
         try
         {
             _logger.LogInformation("Deleting goal {GoalId}", id);
+            
+            // Get goal info before deletion for activity recording
+            var goal = await _service.GetByIdAsync(id);
+            TeamMember? teamMember = null;
+            if (goal != null)
+            {
+                teamMember = await _teamMemberService.GetByIdAsync(goal.TeamMemberId);
+            }
+            
             await _service.DeleteAsync(id);
             _logger.LogInformation("Goal {GoalId} deleted successfully", id);
+            
+            // Record activity (best-effort, non-blocking)
+            if (goal != null && teamMember != null)
+            {
+                try
+                {
+                    var description = $"{teamMember.Name}'s goal '{goal.Description}' was deleted";
+                    await _activityService.RecordActivityAsync(ActivityType.DeleteGoal, goal.TeamMemberId, teamMember.Name, description, goal.Id, goal.Description);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to record activity for goal deletion (non-blocking)");
+                }
+            }
+            
             return NoContent();
         }
         catch (KeyNotFoundException ex)

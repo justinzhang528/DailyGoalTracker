@@ -5,6 +5,7 @@ Auto-generated from all feature plans. Last updated: 2025-11-23
 ## Active Technologies
 - N/A (validation only, no data persistence) (002-validate-dashboard)
 - SQLite (no changes) (003-dashboard-layout)
+- SQLite (same database as existing goals and team members) (004-activity-log)
 
 - (001-team-goals-dashboard)
 
@@ -25,10 +26,10 @@ tests/
 : Follow standard conventions
 
 ## Recent Changes
+- 004-activity-log: Added SQLite (same database as existing goals and team members)
 - 003-dashboard-layout: Added SQLite (no changes)
 - 002-validate-dashboard: Added N/A (validation only, no data persistence)
 
-- 001-team-goals-dashboard: Added
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

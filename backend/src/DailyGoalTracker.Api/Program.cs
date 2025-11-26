@@ -25,12 +25,14 @@ builder.Services.AddCors(options =>
 // Register repositories
 builder.Services.AddScoped<TeamMemberRepository>();
 builder.Services.AddScoped<GoalRepository>();
+builder.Services.AddScoped<ActivityRepository>();
 
 // Register services
 builder.Services.AddScoped<TeamMemberConfigService>();
 builder.Services.AddScoped<TeamMemberService>();
 builder.Services.AddScoped<GoalService>();
 builder.Services.AddScoped<StatsService>();
+builder.Services.AddScoped<ActivityService>();
 
 var app = builder.Build();
 

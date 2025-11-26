@@ -33,3 +33,14 @@ export interface ApiResponse<T> {
   details?: string;
 }
 
+export interface ActivityRecord {
+  id: number;
+  activityType: 'AddGoal' | 'UpdateMood' | 'CompleteGoal' | 'DeleteGoal';
+  teamMemberId: number;
+  teamMemberName: string;
+  description: string;
+  goalId: number | null;
+  goalDescription: string | null;
+  timestamp: string; // ISO 8601 format
+}
+

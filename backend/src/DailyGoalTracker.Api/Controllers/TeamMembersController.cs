@@ -9,11 +9,13 @@ namespace DailyGoalTracker.Api.Controllers;
 public class TeamMembersController : ControllerBase
 {
     private readonly TeamMemberService _service;
+    private readonly ActivityService _activityService;
     private readonly ILogger<TeamMembersController> _logger;
 
-    public TeamMembersController(TeamMemberService service, ILogger<TeamMembersController> logger)
+    public TeamMembersController(TeamMemberService service, ActivityService activityService, ILogger<TeamMembersController> logger)
     {
         _service = service;
+        _activityService = activityService;
         _logger = logger;
     }
 
@@ -35,6 +37,21 @@ public class TeamMembersController : ControllerBase
             _logger.LogInformation("Updating mood for team member {TeamMemberId} to {Mood}", id, request.Mood);
             var teamMember = await _service.UpdateMoodAsync(id, request.Mood);
             _logger.LogInformation("Mood updated successfully for team member {TeamMemberId}", id);
+            
+            // Record activity (best-effort, non-blocking)
+            if (request.Mood != null)
+            {
+                try
+                {
+                    var description = $"{teamMember.Name}'s mood was updated to {request.Mood}";
+                    await _activityService.RecordActivityAsync(ActivityType.UpdateMood, id, teamMember.Name, description);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to record activity for mood update (non-blocking)");
+                }
+            }
+            
             return Ok(new ApiResponse<TeamMember>
             {
                 Data = teamMember,
